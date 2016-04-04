@@ -57,7 +57,6 @@ public class PostListActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     protected void displayPostList(final List<RedditPost> postList) {
