@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,18 +22,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class PostListActivity extends AppCompatActivity {
+public class PostListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     public static final String DATA_JSON_FILE_NAME = "data.json";
+    public static final int ORIENTATION_PORTRAIT = 1;
+    public static final int ORIENTATION_LANDSCAPE = 2;
     private FeedDataStore feedDataStore;
     ListView lsvPostList;
+    GridView grvPostList;
     PostListAdapter adaPostList;
+    List<RedditPost> mListPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
-        lsvPostList = (ListView) findViewById(R.id.lsvPostList);
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(RedditPost.class, new RedditPostConverter());
         Gson gson = gsonBuilder.create();
@@ -61,18 +65,34 @@ public class PostListActivity extends AppCompatActivity {
 
     protected void displayPostList(final List<RedditPost> postList) {
         //TODO: Display post list.
-        adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList);
-        lsvPostList.setAdapter(adaPostList);
+        mListPost = postList;
         TextView footer_listView = (TextView) getLayoutInflater().inflate(R.layout.footer_list_view, null).findViewById(R.id.lblFooter);
-        lsvPostList.addFooterView(footer_listView);
-        lsvPostList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i = new Intent(PostListActivity.this, PostViewActivity.class);
-                i.putExtra("URL", postList.get(position).getUrl());
-                startActivity(i);
-            }
-        });
+        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+            lsvPostList = (ListView) findViewById(R.id.lsvPostList);
+            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList, ORIENTATION_PORTRAIT);
+            lsvPostList.setAdapter(adaPostList);
+            lsvPostList.addFooterView(footer_listView);
+            lsvPostList.setOnItemClickListener(this);
+
+        } else {
+            grvPostList = (GridView) findViewById(R.id.grvPostList);
+            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList, ORIENTATION_LANDSCAPE);
+            grvPostList.setAdapter(adaPostList);
+            grvPostList.setOnItemClickListener(this);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent i = new Intent(PostListActivity.this, PostViewActivity.class);
+        if (position < mListPost.size()) {
+
+            i.putExtra("URL", mListPost.get(position).getUrl());
+
+        }else {
+            i.putExtra("URL","https://www.reddit.com/r/androiddev/");
+        }
+        startActivity(i);
     }
 
     protected int getLayoutResource() {

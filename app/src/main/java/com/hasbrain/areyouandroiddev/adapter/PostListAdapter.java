@@ -1,6 +1,9 @@
 package com.hasbrain.areyouandroiddev.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.hasbrain.areyouandroiddev.PostListActivity;
 import com.hasbrain.areyouandroiddev.R;
 import com.hasbrain.areyouandroiddev.model.RedditPost;
 
@@ -27,12 +31,14 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
     Context mContext;
     int mLayoutID;
     List<RedditPost> mListRedditPost;
+    int mScreenMode;
 
-    public PostListAdapter(Context context, int resource, List<RedditPost> objects) {
+    public PostListAdapter(Context context, int resource, List<RedditPost> objects, int screen_mode) {
         super(context, resource, objects);
         this.mContext = context;
         this.mLayoutID = resource;
         this.mListRedditPost = objects;
+        this.mScreenMode = screen_mode;
     }
 
     @Override
@@ -40,12 +46,11 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
         PostListViewHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(mLayoutID, parent, false);
-            //convertView.setBackgroundResource(R.drawable.customsharp);
             viewHolder = new PostListViewHolder();
             viewHolder.lblFirst = (TextView) convertView.findViewById(R.id.lblFirst);
             viewHolder.lblSecond = (TextView) convertView.findViewById(R.id.lblSecond);
             viewHolder.lblThird = (TextView) convertView.findViewById(R.id.lblThird);
-            viewHolder.lblScore = (TextView) convertView.findViewById(R.id.lblScore);
+            viewHolder.lblScore = (TextView)convertView.findViewById(R.id.lblScore);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (PostListViewHolder) convertView.getTag();
@@ -55,17 +60,32 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
     }
 
     public void throwItem(PostListViewHolder viewholder, RedditPost obj) {
-        viewholder.lblScore.setText(Html.fromHtml("<font color=\"grey\">" + obj.getScore() + "<font>"));
-        viewholder.lblFirst.setText(Html.fromHtml("<b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b> <font color=\"black\">in</font> <b><font color=\"#0A295A\">" + obj.getSubreddit() + "</font></b>"));
 
-        if (obj.isStickyPost()) {
-            viewholder.lblSecond.setText(Html.fromHtml("<font color=\"#387801\">" + obj.getTitle() + "</font>"));
+        if (mScreenMode == PostListActivity.ORIENTATION_PORTRAIT) {
+            viewholder.lblFirst.setText(Html.fromHtml("<big><font color=\"grey\">" + obj.getScore() + "<font></big> <b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b> <font color=\"black\">in</font> <b><font color=\"#0A295A\">" + obj.getSubreddit() + "</font></b>"));
+            if (obj.isStickyPost()) {
+                viewholder.lblSecond.setText(obj.getTitle());
+                viewholder.lblSecond.setTextColor(ContextCompat.getColor(mContext, R.color.colorPostTitle_isSticky));
+            } else {
+                viewholder.lblSecond.setText(obj.getTitle());
+                viewholder.lblSecond.setTextColor(Color.BLACK);
+            }
         } else {
-            viewholder.lblSecond.setText(Html.fromHtml(obj.getTitle()));
+            viewholder.lblFirst.setText(Html.fromHtml("<b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b>"));
+            viewholder.lblScore.setText(String.valueOf(obj.getScore()));
+            viewholder.lblScore.setTextColor(Color.GRAY);
+            if (obj.isStickyPost()) {
+                viewholder.lblSecond.setText(obj.getTitle());
+                viewholder.lblSecond.setTextColor(ContextCompat.getColor(mContext, R.color.colorPostTitle_isSticky));
+            } else {
+                viewholder.lblSecond.setText(obj.getTitle());
+                viewholder.lblSecond.setTextColor(Color.WHITE);
+            }
         }
         long current = Calendar.getInstance().getTimeInMillis();
         long time = current - (obj.getCreatedUTC() * 1000);
-        viewholder.lblThird.setText(Html.fromHtml("<font color=\"grey\">" + obj.getCommentCount() + " Comments \u2022 " + obj.getDomain() + " \u2022 " + getTime(time) + "</font>"));
+        viewholder.lblThird.setText(Html.fromHtml(obj.getCommentCount() + " Comments \u2022 " + obj.getDomain() + " \u2022 " + getTime(time)));
+        viewholder.lblThird.setTextColor(Color.GRAY);
     }
 
     public String getTime(long millis) {

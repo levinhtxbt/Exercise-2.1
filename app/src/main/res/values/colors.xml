@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorPostTitle_portrait">#000000</color>
+    <color name="colorPostTitle_landscape">#FFFFFF</color>
+    <color name="colorPostTitle_isSticky">#387801</color>
+    <color name="colorGray">#bebebe</color>
 </resources>
