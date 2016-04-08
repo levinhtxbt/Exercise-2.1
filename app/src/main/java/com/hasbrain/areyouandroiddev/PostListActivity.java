@@ -84,13 +84,13 @@ public class PostListActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent i = new Intent(PostListActivity.this, PostViewActivity.class);
+        Intent i = new Intent(this, PostViewActivity.class);
         if (position < mListPost.size()) {
 
             i.putExtra("URL", mListPost.get(position).getUrl());
 
-        }else {
-            i.putExtra("URL","https://www.reddit.com/r/androiddev/");
+        } else {
+            i.putExtra("URL", "https://www.reddit.com/r/androiddev/");
         }
         startActivity(i);
     }

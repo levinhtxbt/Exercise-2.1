@@ -8,6 +8,7 @@ import android.webkit.WebView;
 public class PostViewActivity extends AppCompatActivity {
 
     WebView wbvPostView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

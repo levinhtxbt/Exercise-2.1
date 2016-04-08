@@ -55,11 +55,11 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
         } else {
             viewHolder = (PostListViewHolder) convertView.getTag();
         }
-        throwItem(viewHolder, mListRedditPost.get(position));
+        throwItem(mContext,viewHolder, mListRedditPost.get(position),mScreenMode);
         return convertView;
     }
 
-    public void throwItem(PostListViewHolder viewholder, RedditPost obj) {
+    public static void throwItem(Context mContext,PostListViewHolder viewholder, RedditPost obj, int mScreenMode) {
 
         if (mScreenMode == PostListActivity.ORIENTATION_PORTRAIT) {
             viewholder.lblFirst.setText(Html.fromHtml("<big><font color=\"grey\">" + obj.getScore() + "<font></big> <b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b> <font color=\"black\">in</font> <b><font color=\"#0A295A\">" + obj.getSubreddit() + "</font></b>"));
@@ -88,7 +88,7 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
         viewholder.lblThird.setTextColor(Color.GRAY);
     }
 
-    public String getTime(long millis) {
+    public static String getTime(long millis) {
         int[] time = {1000, 60, 60, 24, 30, 12};
         String strTime = "";
         int i;
