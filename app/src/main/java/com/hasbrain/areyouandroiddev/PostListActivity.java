@@ -10,8 +10,11 @@ import com.hasbrain.areyouandroiddev.model.RedditPost;
 import com.hasbrain.areyouandroiddev.model.RedditPostConverter;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -25,18 +28,18 @@ import java.util.List;
 public class PostListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     public static final String DATA_JSON_FILE_NAME = "data.json";
-    public static final int ORIENTATION_PORTRAIT = 1;
-    public static final int ORIENTATION_LANDSCAPE = 2;
+    public static  final String URL = "https://www.reddit.com/r/androiddev/";
     private FeedDataStore feedDataStore;
     ListView lsvPostList;
     GridView grvPostList;
     PostListAdapter adaPostList;
     List<RedditPost> mListPost;
-
+    int mScreenMode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
+        mScreenMode = getResources().getConfiguration().orientation;
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(RedditPost.class, new RedditPostConverter());
         Gson gson = gsonBuilder.create();
@@ -67,16 +70,15 @@ public class PostListActivity extends AppCompatActivity implements AdapterView.O
         //TODO: Display post list.
         mListPost = postList;
         TextView footer_listView = (TextView) getLayoutInflater().inflate(R.layout.footer_list_view, null).findViewById(R.id.lblFooter);
-        if (getResources().getConfiguration().orientation == ORIENTATION_PORTRAIT) {
+        if (mScreenMode == Configuration.ORIENTATION_PORTRAIT) {
             lsvPostList = (ListView) findViewById(R.id.lsvPostList);
-            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList, ORIENTATION_PORTRAIT);
+            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList, mScreenMode);
             lsvPostList.setAdapter(adaPostList);
             lsvPostList.addFooterView(footer_listView);
             lsvPostList.setOnItemClickListener(this);
-
         } else {
             grvPostList = (GridView) findViewById(R.id.grvPostList);
-            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList, ORIENTATION_LANDSCAPE);
+            adaPostList = new PostListAdapter(this, R.layout.post_list_item, postList,mScreenMode);
             grvPostList.setAdapter(adaPostList);
             grvPostList.setOnItemClickListener(this);
         }
@@ -84,18 +86,47 @@ public class PostListActivity extends AppCompatActivity implements AdapterView.O
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent i = new Intent(this, PostViewActivity.class);
+
         if (position < mListPost.size()) {
-
-            i.putExtra("URL", mListPost.get(position).getUrl());
-
+            startPostView(mListPost.get(position).getUrl());
         } else {
-            i.putExtra("URL", "https://www.reddit.com/r/androiddev/");
+            startPostView(URL);
         }
-        startActivity(i);
     }
 
     protected int getLayoutResource() {
         return R.layout.activity_post_list;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case R.id.mnuPostInSection:
+                i = new Intent(PostListActivity.this,PostInSectionActivity.class);
+                startActivity(i);
+                break;
+            case R.id.mnuPostListRecyclerView:
+                i = new Intent(PostListActivity.this,PostListRecyclerView.class);
+                startActivity(i);
+                break;
+            case R.id.mnuPostInSectiontRecyclerView:
+                i = new Intent(PostListActivity.this,PostInSectionRecyclerViewActivity.class);
+                startActivity(i);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void startPostView(String url){
+        Intent i = new Intent(this, PostViewActivity.class);
+        i.putExtra("URL", url);
+        startActivity(i);
     }
 }

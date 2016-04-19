@@ -40,7 +40,6 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
         this.mListRedditPost = objects;
         this.mScreenMode = screen_mode;
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         PostListViewHolder viewHolder;
@@ -50,80 +49,16 @@ public class PostListAdapter extends ArrayAdapter<RedditPost> {
             viewHolder.lblFirst = (TextView) convertView.findViewById(R.id.lblFirst);
             viewHolder.lblSecond = (TextView) convertView.findViewById(R.id.lblSecond);
             viewHolder.lblThird = (TextView) convertView.findViewById(R.id.lblThird);
-            viewHolder.lblScore = (TextView)convertView.findViewById(R.id.lblScore);
+            viewHolder.lblScore = (TextView) convertView.findViewById(R.id.lblScore);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (PostListViewHolder) convertView.getTag();
         }
-        throwItem(mContext,viewHolder, mListRedditPost.get(position),mScreenMode);
+
+        //Bind data
+        RedditPost obj = mListRedditPost.get(position);
+        viewHolder.bindData(obj,mScreenMode);
         return convertView;
-    }
-
-    public static void throwItem(Context mContext,PostListViewHolder viewholder, RedditPost obj, int mScreenMode) {
-
-        if (mScreenMode == PostListActivity.ORIENTATION_PORTRAIT) {
-            viewholder.lblFirst.setText(Html.fromHtml("<big><font color=\"grey\">" + obj.getScore() + "<font></big> <b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b> <font color=\"black\">in</font> <b><font color=\"#0A295A\">" + obj.getSubreddit() + "</font></b>"));
-            if (obj.isStickyPost()) {
-                viewholder.lblSecond.setText(obj.getTitle());
-                viewholder.lblSecond.setTextColor(ContextCompat.getColor(mContext, R.color.colorPostTitle_isSticky));
-            } else {
-                viewholder.lblSecond.setText(obj.getTitle());
-                viewholder.lblSecond.setTextColor(Color.BLACK);
-            }
-        } else {
-            viewholder.lblFirst.setText(Html.fromHtml("<b><font color=\"#0A295A\">" + obj.getAuthor() + "</font></b>"));
-            viewholder.lblScore.setText(String.valueOf(obj.getScore()));
-            viewholder.lblScore.setTextColor(Color.GRAY);
-            if (obj.isStickyPost()) {
-                viewholder.lblSecond.setText(obj.getTitle());
-                viewholder.lblSecond.setTextColor(ContextCompat.getColor(mContext, R.color.colorPostTitle_isSticky));
-            } else {
-                viewholder.lblSecond.setText(obj.getTitle());
-                viewholder.lblSecond.setTextColor(Color.WHITE);
-            }
-        }
-        long current = Calendar.getInstance().getTimeInMillis();
-        long time = current - (obj.getCreatedUTC() * 1000);
-        viewholder.lblThird.setText(Html.fromHtml(obj.getCommentCount() + " Comments \u2022 " + obj.getDomain() + " \u2022 " + getTime(time)));
-        viewholder.lblThird.setTextColor(Color.GRAY);
-    }
-
-    public static String getTime(long millis) {
-        int[] time = {1000, 60, 60, 24, 30, 12};
-        String strTime = "";
-        int i;
-        for (i = 0; i < time.length - 1; i++) {
-            millis /= time[i];
-            if (millis < time[i + 1])
-                break;
-        }
-        switch (i) {
-            case 1:
-                strTime = "seconds";
-                break;
-            case 2:
-                strTime = "minutes";
-                break;
-            case 3:
-                strTime = "days";
-                break;
-            case 4:
-                strTime = "months";
-                break;
-            case 5:
-                strTime = "year";
-                break;
-        }
-        return millis + " " + strTime.toString();
-
-//        long days = TimeUnit.MILLISECONDS.toDays(millis);
-//        millis -= TimeUnit.DAYS.toMillis(days);
-//        long hours = TimeUnit.MILLISECONDS.toHours(millis);
-//        millis -= TimeUnit.HOURS.toMillis(hours);
-//        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
-//        millis -= TimeUnit.MINUTES.toMillis(minutes);
-//        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
-//        return days+" days";
     }
 }
 

@@ -28,8 +28,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:lines="1"
-                android:textSize="15dp"
-                android:text="Author" />
+                android:text="Author"
+                android:textColor="#24657B"
+                android:textSize="15dp" />
 
             <TextView
                 android:id="@+id/lblScore"
@@ -37,8 +38,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dp"
-                android:textSize="20dp"
-                android:text="10" />
+                android:text="10"
+                android:textSize="20dp" />
         </RelativeLayout>
 
 
@@ -58,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lines="2"
-            android:text="Comment" />
+            android:text="Comment"
+            android:textColor="#bebebe" />
     </LinearLayout>
 
 </LinearLayout>

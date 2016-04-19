@@ -85,7 +85,7 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.group_post_in_sector, parent, false);
         }
-        TextView tvTitleGroup = (TextView) convertView.findViewById(R.id.tvTitleGroupPostInSection);
+        TextView tvTitleGroup = (TextView) convertView.findViewById(R.id.lblTitleGroupPostInSection);
         tvTitleGroup.setText(mListGroup.get(groupPosition));
         return convertView;
     }
@@ -102,10 +102,13 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
             viewHolder.lblScore = (TextView) convertView.findViewById(R.id.lblScore);
             convertView.setTag(viewHolder);
         } else viewHolder = (PostListViewHolder) convertView.getTag();
-        RedditPost child = mListChild.get(mListGroup.get(groupPosition)).get(childPosition);
-        PostListAdapter.throwItem(mContext, viewHolder, child, mScreenMode);
+
+        //Bind data
+        RedditPost obj = mListChild.get(mListGroup.get(groupPosition)).get(childPosition);
+        viewHolder.bindData(obj, mScreenMode);
         return convertView;
     }
+
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         return true;
