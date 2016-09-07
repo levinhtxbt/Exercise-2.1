@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item_clickable"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:paddingLeft="20dp"
     android:paddingTop="10dp"
     android:paddingBottom="10dp">
 
     <TextView
-        android:id="@+id/tvTitleGroupPostInSection"
+        android:id="@+id/lblTitleGroupPostInSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#000000"
