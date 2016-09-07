@@ -1,9 +1,11 @@
-package com.hasbrain.areyouandroiddev;
+package com.hasbrain.areyouandroiddev.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.webkit.WebView;
+
+import com.hasbrain.areyouandroiddev.R;
 
 public class PostViewActivity extends AppCompatActivity {
 

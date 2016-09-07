@@ -12,5 +12,4 @@ public class PostListViewHolder {
     TextView lblSecond;
     TextView lblThird;
     TextView lblScore;
-
 }

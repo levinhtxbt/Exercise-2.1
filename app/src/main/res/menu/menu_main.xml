@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mnuPostInSection" android:title="Post in section"/>
+    <item android:id="@+id/mnuHttpConnection" android:title="get From Internet"/>
+    <item android:id="@+id/mnuPostListRecyclerView" android:title="PostList using RecyclerView"/>
+    <item android:id="@+id/mnuPostInSectionRecyclerView" android:title="Post in Section using RecyclerView"/>
+</menu>

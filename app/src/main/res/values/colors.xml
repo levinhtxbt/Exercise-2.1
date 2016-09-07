@@ -8,4 +8,10 @@
     <color name="colorPostTitle_landscape">#FFFFFF</color>
     <color name="colorPostTitle_isSticky">#387801</color>
     <color name="colorGray">#bebebe</color>
+
+
+    <color name="orange">#FF9900</color>
+    <color name="green">#009900</color>
+    <color name="blue">#000099</color>
+
 </resources>

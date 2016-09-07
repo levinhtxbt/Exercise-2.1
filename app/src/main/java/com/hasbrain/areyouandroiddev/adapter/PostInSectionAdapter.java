@@ -1,47 +1,47 @@
 package com.hasbrain.areyouandroiddev.adapter;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.hasbrain.areyouandroiddev.PostListActivity;
-import com.hasbrain.areyouandroiddev.PostViewActivity;
 import com.hasbrain.areyouandroiddev.R;
+import com.hasbrain.areyouandroiddev.model.OnItemClick;
 import com.hasbrain.areyouandroiddev.model.RedditPost;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Levin on 08/04/2016.
  */
-public class PostInSectionAdapter extends BaseExpandableListAdapter {
+public class PostInSectionAdapter extends BaseExpandableListAdapter implements View.OnClickListener {
+    private static final int GROUP_TYPE_COUNT = 2, TYPE_DEFAULT = 0, TYPE_BOTTOM_VIEW = 1;
+
     private Context mContext;
     private List<String> mListGroup;
     private HashMap<String, List<RedditPost>> mListChild;
     private int mLayoutIDGroup;
     private int mLayoutIDChild;
     private int mScreenMode;
+    OnItemClick callback;
 
     public PostInSectionAdapter(Context mContext,
                                 int mLayoutIDGroup, int mLayoutIDChild,
                                 List<String> mListGroup, HashMap<String, List<RedditPost>> mListChild,
+                                OnItemClick callback,
                                 int mScreenMode) {
         this.mContext = mContext;
         this.mListGroup = mListGroup;
-        this.mListChild = mListChild;
+        if (mListChild == null)
+            this.mListChild = new HashMap<>();
+        else
+            this.mListChild = mListChild;
         this.mLayoutIDGroup = mLayoutIDGroup;
         this.mLayoutIDChild = mLayoutIDChild;
+        this.callback = callback;
         this.mScreenMode = mScreenMode;
     }
 
@@ -51,8 +51,20 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
+    public int getGroupType(int groupPosition) {
+        return groupPosition == mListGroup.size() - 1 ?
+                TYPE_BOTTOM_VIEW : TYPE_DEFAULT;
+    }
+
+    @Override
+    public int getGroupTypeCount() {
+        return GROUP_TYPE_COUNT;
+    }
+
+    @Override
     public int getChildrenCount(int groupPosition) {
-        return mListChild.get(mListGroup.get(groupPosition)).size();
+        return mListChild.get(mListGroup.get(groupPosition)) == null ?
+                0 : mListChild.get(mListGroup.get(groupPosition)).size();
     }
 
     @Override
@@ -62,7 +74,9 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return mListChild.get(mListGroup.get(groupPosition)).get(childPosition);
+        List<RedditPost> child = mListChild.get(mListGroup.get(groupPosition));
+        return child == null ?
+                null : child.get(childPosition);
     }
 
     @Override
@@ -82,17 +96,31 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+        int type = getGroupType(groupPosition);
+        String title = mListGroup.get(groupPosition);
+
         if (convertView == null) {
-            convertView = LayoutInflater.from(mContext).inflate(R.layout.group_post_in_sector, parent, false);
+            LayoutInflater infalInflater = (LayoutInflater) mContext
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (type == TYPE_DEFAULT) {
+                convertView = infalInflater.inflate(R.layout.group_post_in_sector, null);
+            } else {
+                convertView = infalInflater.inflate(R.layout.footer_list_view, null);
+                convertView.findViewById(R.id.item_clickable).setTag(new int[]{groupPosition, 0});
+                convertView.findViewById(R.id.item_clickable).setOnClickListener(this);
+            }
         }
-        TextView tvTitleGroup = (TextView) convertView.findViewById(R.id.tvTitleGroupPostInSection);
-        tvTitleGroup.setText(mListGroup.get(groupPosition));
+        if (type == TYPE_DEFAULT) {
+            TextView tvTitleGroup = (TextView) convertView.findViewById(R.id.tvTitleGroupPostInSection);
+            tvTitleGroup.setText(title);
+        }
         return convertView;
     }
 
     @Override
     public View getChildView(final int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        PostListViewHolder viewHolder;
+        PostListViewHolder viewHolder = null;
+        RedditPost child = mListChild.get(mListGroup.get(groupPosition)).get(childPosition);
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.post_list_item, parent, false);
             viewHolder = new PostListViewHolder();
@@ -100,14 +128,32 @@ public class PostInSectionAdapter extends BaseExpandableListAdapter {
             viewHolder.lblSecond = (TextView) convertView.findViewById(R.id.lblSecond);
             viewHolder.lblThird = (TextView) convertView.findViewById(R.id.lblThird);
             viewHolder.lblScore = (TextView) convertView.findViewById(R.id.lblScore);
+            convertView.findViewById(R.id.item_clickable).setOnClickListener(this);
             convertView.setTag(viewHolder);
-        } else viewHolder = (PostListViewHolder) convertView.getTag();
-        RedditPost child = mListChild.get(mListGroup.get(groupPosition)).get(childPosition);
+        }
+
+        if (viewHolder == null)
+            viewHolder = (PostListViewHolder) convertView.getTag();
         PostListAdapter.throwItem(mContext, viewHolder, child, mScreenMode);
+        convertView.findViewById(R.id.item_clickable).setTag(new int[]{groupPosition, childPosition});
         return convertView;
     }
+
     @Override
     public boolean isChildSelectable(int groupPosition, int childPosition) {
-        return true;
+        return false;
+    }
+
+    public HashMap<String, List<RedditPost>> getChildList() {
+        return mListChild;
+    }
+
+    @Override
+    public void onClick(View v) {
+        int[] position = (int[]) v.getTag();
+        RedditPost post = (RedditPost) getChild(position[0], position[1]);
+        String url = post == null
+                ? "https://www.reddit.com/r/androiddev" : post.getUrl();
+        callback.onItemClick(url);
     }
 }

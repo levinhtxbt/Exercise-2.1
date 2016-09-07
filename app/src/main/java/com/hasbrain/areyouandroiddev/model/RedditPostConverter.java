@@ -18,7 +18,9 @@ public class RedditPostConverter extends EasyDeserializer<RedditPost> {
         RedditPost redditPost = null;
         if (json != null && json.isJsonObject()) {
             JsonObject postJsonObject = json.getAsJsonObject();
+
             JsonElement dataElement = postJsonObject.get("data");
+
             if (dataElement != null && dataElement.isJsonObject()) {
                 JsonObject dataJsonObject = dataElement.getAsJsonObject();
                 redditPost = new RedditPost();

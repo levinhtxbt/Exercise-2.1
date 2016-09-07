@@ -3,20 +3,26 @@
     package="com.hasbrain.areyouandroiddev">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-
-        <activity android:name=".PostInSectionActivity">
+        android:theme="@style/Theme.AppCompat">
+        <activity android:name=".activity.PostListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PostViewActivity"></activity>
+        <activity android:name=".activity.PostInSectionActivity" />
+        <activity android:name=".activity.PostViewActivity" />
+        <activity android:name=".activity.PostListFromInternetActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PostListRecyclerActivity"></activity>
     </application>
+
 </manifest>

@@ -30,7 +30,7 @@ public class FileBasedFeedDataStore implements FeedDataStore {
     public void getPostList(OnRedditPostsRetrievedListener onRedditPostsRetrievedListener) {
         if (onRedditPostsRetrievedListener != null) {
             Type type = new TypeToken<List<RedditPost>>(){}.getType();
-            List<RedditPost> posts = gson.fromJson(new InputStreamReader(fileInputStream), type);
+            List<RedditPost> posts = gson.fromJson( new InputStreamReader(fileInputStream), type);
             onRedditPostsRetrievedListener.onRedditPostsRetrieved(posts, null);
         }
     }
